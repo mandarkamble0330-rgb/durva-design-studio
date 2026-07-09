@@ -40,7 +40,6 @@ import {
   Palette,
   LayoutGrid,
   Lamp,
-  FileText,
   Upload,
   Sparkles,
 } from 'lucide-react'
@@ -52,7 +51,6 @@ const SECTIONS = [
   { id: 'design-language', label: 'Design Language', icon: Palette },
   { id: 'zones-elements', label: 'Zones & Elements', icon: LayoutGrid },
   { id: 'materials-lighting', label: 'Materials & Lighting', icon: Lamp },
-  { id: 'client-brief', label: 'Client Brief', icon: FileText },
   { id: 'references', label: 'References', icon: Upload },
   { id: 'generate', label: 'Generate', icon: Sparkles },
 ] as const
@@ -77,6 +75,40 @@ export function ProjectForm({ project, mode = 'create' }: ProjectFormProps) {
   const [referenceImages, setReferenceImages] = useState<string[]>(project?.reference_images ?? [])
   const [referencePdfs, setReferencePdfs] = useState<string[]>(project?.reference_pdfs ?? [])
   const [uploadingField, setUploadingField] = useState<string | null>(null)
+
+  // Booth size state
+  const isExistingCustom = project?.booth_size?.startsWith('Custom:') ?? false
+  const [boothSizeSelection, setBoothSizeSelection] = useState<string>(
+    isExistingCustom ? 'Custom' : (project?.booth_size ?? '')
+  )
+  const [customWidth, setCustomWidth] = useState(() => {
+    if (!isExistingCustom) return ''
+    const match = project!.booth_size.match(/Custom:\s*([\d.]+)\s*x\s*([\d.]+)/)
+    return match?.[1] ?? ''
+  })
+  const [customDepth, setCustomDepth] = useState(() => {
+    if (!isExistingCustom) return ''
+    const match = project!.booth_size.match(/Custom:\s*([\d.]+)\s*x\s*([\d.]+)/)
+    return match?.[2] ?? ''
+  })
+  const [customHeight, setCustomHeight] = useState(() => {
+    if (!isExistingCustom) return ''
+    const match = project!.booth_size.match(/x\s*[\d.]+\s*x\s*([\d.]+)m/)
+    return match?.[1] ?? ''
+  })
+
+  const isCustomSize = boothSizeSelection === 'Custom'
+
+  const computedBoothSize = (() => {
+    if (!isCustomSize) return boothSizeSelection
+    const w = parseFloat(customWidth)
+    const d = parseFloat(customDepth)
+    if (!w || !d || w <= 0 || d <= 0) return ''
+    const h = parseFloat(customHeight)
+    const area = w * d
+    const dims = h > 0 ? `${w}x${d}x${h}m` : `${w}x${d}m`
+    return `Custom: ${dims} (${area} sqm)`
+  })()
 
   const setSectionRef = useCallback((id: string) => (el: HTMLElement | null) => {
     sectionRefs.current[id] = el
@@ -120,7 +152,6 @@ export function ProjectForm({ project, mode = 'create' }: ProjectFormProps) {
     if (data.get('design_theme')) completed.add('design-language')
     if (selectedZones.length > 0) completed.add('zones-elements')
     if (data.get('flooring_type') || selectedLighting.length > 0) completed.add('materials-lighting')
-    if (data.get('branding_requirements')) completed.add('client-brief')
     completed.add('references')
     completed.add('generate')
 
@@ -345,9 +376,13 @@ export function ProjectForm({ project, mode = 'create' }: ProjectFormProps) {
           </CardHeader>
           <CardContent className="grid gap-6 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="booth_size">Booth Size</Label>
-              <Select name="booth_size" defaultValue={project?.booth_size ?? ''}>
-                <SelectTrigger id="booth_size">
+              <Label htmlFor="booth_size_select">Booth Size</Label>
+              <input type="hidden" name="booth_size" value={computedBoothSize} />
+              <Select
+                value={boothSizeSelection}
+                onValueChange={(v) => setBoothSizeSelection(v ?? '')}
+              >
+                <SelectTrigger id="booth_size_select">
                   <SelectValue placeholder="Select size" />
                 </SelectTrigger>
                 <SelectContent>
@@ -359,6 +394,57 @@ export function ProjectForm({ project, mode = 'create' }: ProjectFormProps) {
                 </SelectContent>
               </Select>
             </div>
+            {isCustomSize && (
+              <div className="sm:col-span-2 grid gap-4 sm:grid-cols-3 rounded-lg border p-4 bg-muted/30">
+                <div className="space-y-2">
+                  <Label htmlFor="custom_width">
+                    Width (meters) <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="custom_width"
+                    type="number"
+                    min={0.1}
+                    step="any"
+                    required
+                    value={customWidth}
+                    onChange={(e) => setCustomWidth(e.target.value)}
+                    placeholder="e.g. 6"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="custom_depth">
+                    Depth (meters) <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="custom_depth"
+                    type="number"
+                    min={0.1}
+                    step="any"
+                    required
+                    value={customDepth}
+                    onChange={(e) => setCustomDepth(e.target.value)}
+                    placeholder="e.g. 9"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="custom_height">Height (meters)</Label>
+                  <Input
+                    id="custom_height"
+                    type="number"
+                    min={0.1}
+                    step="any"
+                    value={customHeight}
+                    onChange={(e) => setCustomHeight(e.target.value)}
+                    placeholder="Optional"
+                  />
+                </div>
+                {computedBoothSize && (
+                  <p className="sm:col-span-3 text-xs text-muted-foreground">
+                    Computed size: <span className="font-medium text-foreground">{computedBoothSize.replace('Custom: ', '')}</span>
+                  </p>
+                )}
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="ceiling_height">Ceiling / Fascia Height</Label>
               <Input
@@ -553,80 +639,7 @@ export function ProjectForm({ project, mode = 'create' }: ProjectFormProps) {
           </CardContent>
         </Card>
 
-        {/* Section 6: Client Brief */}
-        <Card id="client-brief" ref={setSectionRef('client-brief')}>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              Client Brief
-            </CardTitle>
-            <CardDescription>Detailed requirements and guidelines</CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-6 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="branding_requirements">Branding Requirements</Label>
-              <Textarea
-                id="branding_requirements"
-                name="branding_requirements"
-                defaultValue={project?.branding_requirements ?? ''}
-                placeholder="Describe branding guidelines, logo usage, etc."
-                rows={3}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="product_categories">Product Categories</Label>
-              <Textarea
-                id="product_categories"
-                name="product_categories"
-                defaultValue={project?.product_categories ?? ''}
-                placeholder="List the product categories to showcase"
-                rows={3}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="required_zones">Required Zones</Label>
-              <Textarea
-                id="required_zones"
-                name="required_zones"
-                defaultValue={project?.required_zones ?? ''}
-                placeholder="Describe zone-specific requirements"
-                rows={3}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="display_requirements">Display Requirements</Label>
-              <Textarea
-                id="display_requirements"
-                name="display_requirements"
-                defaultValue={project?.display_requirements ?? ''}
-                placeholder="Screen sizes, digital signage, etc."
-                rows={3}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="visitor_engagement">Visitor Engagement</Label>
-              <Textarea
-                id="visitor_engagement"
-                name="visitor_engagement"
-                defaultValue={project?.visitor_engagement ?? ''}
-                placeholder="Interactive features, demos, etc."
-                rows={3}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="color_guidelines">Color Guidelines</Label>
-              <Textarea
-                id="color_guidelines"
-                name="color_guidelines"
-                defaultValue={project?.color_guidelines ?? ''}
-                placeholder="Specific color rules or restrictions"
-                rows={3}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Section 7: References */}
+        {/* Section 6: References */}
         <Card id="references" ref={setSectionRef('references')}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -773,7 +786,7 @@ export function ProjectForm({ project, mode = 'create' }: ProjectFormProps) {
           </CardContent>
         </Card>
 
-        {/* Section 8: Generate */}
+        {/* Section 7: Generate */}
         <Card id="generate" ref={setSectionRef('generate')}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

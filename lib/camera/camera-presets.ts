@@ -8,7 +8,7 @@ const CAMERA_VIEWS: Record<CameraViewId, CameraView> = {
     position: { x: 0, y: 1.6, z: 8 },
     rotation: { pitch: 0, yaw: 0, roll: 0 },
     fov: 50,
-    promptSuffix: 'front elevation view, straight-on camera, centered composition, eye-level perspective',
+    promptSuffix: '',
     negativeHints: 'side angle, aerial view, tilted camera, dutch angle',
   },
   left: {
@@ -18,8 +18,8 @@ const CAMERA_VIEWS: Record<CameraViewId, CameraView> = {
     position: { x: -8, y: 1.6, z: 0 },
     rotation: { pitch: 0, yaw: 90, roll: 0 },
     fov: 50,
-    promptSuffix: 'left side elevation view, 90-degree angle from the left, straight-on side camera',
-    negativeHints: 'front view, rear view, aerial view, tilted camera',
+    promptSuffix: 'Render the exact same booth from the left side (90°). Preserve every structural element, branding, dimensions, materials, lighting, object placement, and branding exactly.',
+    negativeHints: 'front view, rear view, aerial view, tilted camera, redesigned booth, different layout',
   },
   right: {
     id: 'right',
@@ -28,8 +28,8 @@ const CAMERA_VIEWS: Record<CameraViewId, CameraView> = {
     position: { x: 8, y: 1.6, z: 0 },
     rotation: { pitch: 0, yaw: -90, roll: 0 },
     fov: 50,
-    promptSuffix: 'right side elevation view, 90-degree angle from the right, straight-on side camera',
-    negativeHints: 'front view, rear view, aerial view, tilted camera',
+    promptSuffix: 'Render the exact same booth from the right side (90°). Preserve every structural element, branding, dimensions, materials, lighting, object placement, and branding exactly.',
+    negativeHints: 'front view, rear view, aerial view, tilted camera, redesigned booth, different layout',
   },
   rear: {
     id: 'rear',
@@ -38,8 +38,8 @@ const CAMERA_VIEWS: Record<CameraViewId, CameraView> = {
     position: { x: 0, y: 1.6, z: -8 },
     rotation: { pitch: 0, yaw: 180, roll: 0 },
     fov: 50,
-    promptSuffix: 'rear view, showing the back of the booth structure, straight-on from behind',
-    negativeHints: 'front view, side view, aerial view, tilted camera',
+    promptSuffix: 'Render the exact same booth from the rear (180°). Keep all architecture, branding, and layout identical.',
+    negativeHints: 'front view, side view, aerial view, tilted camera, redesigned booth, different layout',
   },
   angle_45: {
     id: 'angle_45',
@@ -48,8 +48,8 @@ const CAMERA_VIEWS: Record<CameraViewId, CameraView> = {
     position: { x: 6, y: 3, z: 6 },
     rotation: { pitch: -15, yaw: -45, roll: 0 },
     fov: 55,
-    promptSuffix: 'three-quarter perspective view, 45-degree angle, slightly elevated camera, dynamic composition',
-    negativeHints: 'flat elevation, top-down, extreme angle, fisheye',
+    promptSuffix: 'Render the exact same booth from a 45-degree perspective. Do not redesign or modify the booth.',
+    negativeHints: 'flat elevation, top-down, extreme angle, fisheye, redesigned booth, different layout',
   },
   top_iso: {
     id: 'top_iso',
@@ -58,8 +58,8 @@ const CAMERA_VIEWS: Record<CameraViewId, CameraView> = {
     position: { x: 5, y: 10, z: 5 },
     rotation: { pitch: -55, yaw: -45, roll: 0 },
     fov: 45,
-    promptSuffix: 'top-down isometric view, elevated bird-eye perspective, showing full booth layout and floor plan',
-    negativeHints: 'eye-level, ground-level, straight-on elevation, extreme close-up',
+    promptSuffix: 'Render the exact same booth from a top isometric architectural view while preserving every structural element.',
+    negativeHints: 'eye-level, ground-level, straight-on elevation, extreme close-up, redesigned booth, different layout',
   },
 }
 

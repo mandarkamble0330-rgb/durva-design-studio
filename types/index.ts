@@ -42,15 +42,7 @@ export interface Project {
   flooring_type: string
   lighting_preferences: string[]
 
-  // Section 6 – Client Brief
-  branding_requirements: string
-  product_categories: string
-  required_zones: string
-  display_requirements: string
-  visitor_engagement: string
-  color_guidelines: string
-
-  // Section 7 – References
+  // Section 6 – References
   logo_url: string | null
   reference_images: string[]
   reference_pdfs: string[]

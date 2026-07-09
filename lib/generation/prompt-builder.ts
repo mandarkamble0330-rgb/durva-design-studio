@@ -20,12 +20,6 @@ export function extractPromptContext(project: Project): PromptContext {
     zones: project.zones,
     flooringType: project.flooring_type,
     lightingPreferences: project.lighting_preferences,
-    brandingRequirements: project.branding_requirements,
-    productCategories: project.product_categories,
-    requiredZones: project.required_zones,
-    displayRequirements: project.display_requirements,
-    visitorEngagement: project.visitor_engagement,
-    colorGuidelines: project.color_guidelines,
     logoUrl: project.logo_url,
     referenceImages: project.reference_images,
     referencePdfs: project.reference_pdfs,
@@ -82,16 +76,6 @@ function buildDesignPrompt(ctx: PromptContext): string {
     lines.push('', '### Zones & Functional Areas')
     lines.push(`Include the following zones in the booth layout:`)
     ctx.zones.forEach(zone => lines.push(`- ${zone}`))
-  }
-
-  if (ctx.brandingRequirements || ctx.productCategories || ctx.displayRequirements || ctx.visitorEngagement) {
-    lines.push('', '### Client Brief')
-    if (ctx.brandingRequirements) lines.push(`**Branding Requirements:** ${ctx.brandingRequirements}`)
-    if (ctx.productCategories) lines.push(`**Product Categories:** ${ctx.productCategories}`)
-    if (ctx.requiredZones) lines.push(`**Required Zones Detail:** ${ctx.requiredZones}`)
-    if (ctx.displayRequirements) lines.push(`**Display Requirements:** ${ctx.displayRequirements}`)
-    if (ctx.visitorEngagement) lines.push(`**Visitor Engagement Strategy:** ${ctx.visitorEngagement}`)
-    if (ctx.colorGuidelines) lines.push(`**Color Guidelines:** ${ctx.colorGuidelines}`)
   }
 
   return lines.join('\n')

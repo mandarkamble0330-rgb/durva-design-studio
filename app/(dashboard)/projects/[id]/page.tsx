@@ -16,7 +16,6 @@ import {
   Palette,
   LayoutGrid,
   Lamp,
-  FileText,
   Upload,
   Pencil,
   ArrowLeft,
@@ -176,25 +175,6 @@ export default async function ProjectViewPage({
                 )}
               </dd>
             </div>
-          </dl>
-        </CardContent>
-      </Card>
-
-      {/* Client Brief */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <FileText className="h-4 w-4" /> Client Brief
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <dl className="grid gap-4 sm:grid-cols-2">
-            <Field label="Branding Requirements" value={project.branding_requirements} />
-            <Field label="Product Categories" value={project.product_categories} />
-            <Field label="Required Zones" value={project.required_zones} />
-            <Field label="Display Requirements" value={project.display_requirements} />
-            <Field label="Visitor Engagement" value={project.visitor_engagement} />
-            <Field label="Color Guidelines" value={project.color_guidelines} />
           </dl>
         </CardContent>
       </Card>

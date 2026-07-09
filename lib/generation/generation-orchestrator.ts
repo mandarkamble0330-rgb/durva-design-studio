@@ -6,6 +6,7 @@ import { buildStructuredPrompt } from './prompt-builder'
 import { getOpenRouterProvider, getLeonardoProvider } from './provider-registry'
 import { ReferenceImageManager } from './reference-image-manager'
 import { buildLeonardoPrompt, buildLeonardoRefinementPrompt, buildLeonardoNegativePrompt, validateLeonardoPrompt } from './leonardo-prompt-builder'
+import { getCameraPromptSuffix, getCameraNegativeHints } from '@/lib/camera'
 
 interface OrchestratorResult {
   success: boolean
@@ -168,10 +169,24 @@ export async function runFullPipeline(
     const initImageId = primaryRef?.init_image_id ?? null
     const useReference = !!(initImageId || referenceImageUrl)
 
-    const leonardoPrompt = useReference
+    let leonardoPrompt = useReference
       ? buildLeonardoRefinementPrompt(designResponse)
       : buildLeonardoPrompt(designResponse)
-    const leonardoNegative = buildLeonardoNegativePrompt(designResponse)
+    let leonardoNegative = buildLeonardoNegativePrompt(designResponse)
+
+    const cameraSuffix = getCameraPromptSuffix(cameraViewId)
+    const cameraNegative = getCameraNegativeHints(cameraViewId)
+
+    if (cameraSuffix) {
+      leonardoPrompt = `${leonardoPrompt} ${cameraSuffix}`
+    }
+    if (cameraNegative) {
+      leonardoNegative = leonardoNegative ? `${leonardoNegative}, ${cameraNegative}` : cameraNegative
+    }
+
+    console.log('[Orchestrator] Camera view:', cameraViewId, '| suffix:', cameraSuffix || '(none)', '| negative hints:', cameraNegative || '(none)')
+    console.log('[Orchestrator] Final Leonardo prompt preview:', leonardoPrompt.slice(0, 200) + (leonardoPrompt.length > 200 ? '...' : ''))
+
     const promptCheck = validateLeonardoPrompt(leonardoPrompt)
     console.log('[Orchestrator] Leonardo mode:', useReference ? 'image-to-image' : 'text-to-image', 'prompt length:', promptCheck.length)
 

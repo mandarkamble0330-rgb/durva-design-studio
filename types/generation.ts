@@ -74,12 +74,6 @@ export interface PromptContext {
   zones: string[]
   flooringType: string
   lightingPreferences: string[]
-  brandingRequirements: string
-  productCategories: string
-  requiredZones: string
-  displayRequirements: string
-  visitorEngagement: string
-  colorGuidelines: string
   logoUrl: string | null
   referenceImages: string[]
   referencePdfs: string[]
