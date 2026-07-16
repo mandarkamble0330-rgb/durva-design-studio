@@ -123,8 +123,8 @@ function generateCamera(obj: BlenderObject): string {
   lines.push(`cam_data.type = ${pyStr(cam.type)}`)
   lines.push(`cam_data.lens_unit = 'FOV'`)
   lines.push(`cam_data.angle = ${cam.fov}`)
-  lines.push(`cam_data.clip_start = ${cam.clipStart}`)
-  lines.push(`cam_data.clip_end = ${cam.clipEnd}`)
+  lines.push(`cam_data.clip_start = ${safeNum(cam.clipStart, 0.1)}`)
+  lines.push(`cam_data.clip_end = ${safeNum(cam.clipEnd, 1000)}`)
   lines.push(`obj = bpy.data.objects.new(${pyStr(obj.name)}, cam_data)`)
   lines.push(generateTransform(obj))
   lines.push(generateLinkToCollection(obj))
@@ -159,14 +159,18 @@ function generateLight(obj: BlenderObject): string {
   return lines.join('\n')
 }
 
+function safeNum(v: unknown, fallback: number): number {
+  return typeof v === 'number' && isFinite(v) ? v : fallback
+}
+
 function generateTransform(obj: BlenderObject): string {
-  const loc = obj.transform.location
-  const rot = obj.transform.rotation
-  const scl = obj.transform.scale
+  const loc = obj.transform?.location ?? { x: 0, y: 0, z: 0 }
+  const rot = obj.transform?.rotation ?? { x: 0, y: 0, z: 0 }
+  const scl = obj.transform?.scale ?? { x: 1, y: 1, z: 1 }
   const lines: string[] = []
-  lines.push(`obj.location = (${loc.x}, ${loc.y}, ${loc.z})`)
-  lines.push(`obj.rotation_euler = Euler((${rot.x}, ${rot.y}, ${rot.z}), 'XYZ')`)
-  lines.push(`obj.scale = (${scl.x}, ${scl.y}, ${scl.z})`)
+  lines.push(`obj.location = (${safeNum(loc.x, 0)}, ${safeNum(loc.y, 0)}, ${safeNum(loc.z, 0)})`)
+  lines.push(`obj.rotation_euler = Euler((${safeNum(rot.x, 0)}, ${safeNum(rot.y, 0)}, ${safeNum(rot.z, 0)}), 'XYZ')`)
+  lines.push(`obj.scale = (${safeNum(scl.x, 1)}, ${safeNum(scl.y, 1)}, ${safeNum(scl.z, 1)})`)
   return lines.join('\n')
 }
 
@@ -182,11 +186,12 @@ function generateCustomProperties(obj: BlenderObject): string {
   if (obj.customProperties.length === 0) return ''
   const lines: string[] = []
   for (const prop of obj.customProperties) {
+    if (prop.value === undefined || prop.value === null) continue
     if (typeof prop.value === 'string') {
       lines.push(`obj[${pyStr(prop.key)}] = ${pyStr(prop.value)}`)
     } else if (typeof prop.value === 'boolean') {
       lines.push(`obj[${pyStr(prop.key)}] = ${prop.value ? 1 : 0}`)
-    } else {
+    } else if (typeof prop.value === 'number' && isFinite(prop.value)) {
       lines.push(`obj[${pyStr(prop.key)}] = ${prop.value}`)
     }
   }

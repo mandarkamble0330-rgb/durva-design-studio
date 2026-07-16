@@ -75,10 +75,10 @@ function buildLightRef(light: LightDefinition): LightReference {
 
 function buildCameraRef(cam: BlueprintCamera): CameraReference {
   return {
-    viewId: cam.viewId,
-    fov: cam.fov,
-    near: cam.near,
-    far: cam.far,
+    viewId: cam.viewId ?? 'default',
+    fov: cam.fov ?? 50,
+    near: cam.near ?? 0.1,
+    far: cam.far ?? 1000,
   }
 }
 
@@ -242,7 +242,7 @@ function buildLightNodes(lights: LightDefinition[], rootId: string): SceneNode[]
       type: 'light',
       parentId: groupId,
       transform: {
-        position: light.position,
+        position: light.position ?? { x: 0, y: 0, z: 0 },
         rotation: light.rotation ?? { x: 0, y: 0, z: 0 },
         scale: { x: 1, y: 1, z: 1 },
       },
@@ -270,16 +270,16 @@ function buildCameraNodes(cameras: BlueprintCamera[], rootId: string): SceneNode
   for (const cam of cameras) {
     nodes.push(makeNode({
       id: generateId('cam'),
-      name: `Camera ${cam.viewId}`,
+      name: `Camera ${cam.viewId ?? 'default'}`,
       type: 'camera',
       parentId: groupId,
       transform: {
-        position: cam.position,
-        rotation: { x: cam.rotation.pitch, y: cam.rotation.yaw, z: cam.rotation.roll },
+        position: cam.position ?? { x: 0, y: 0, z: 0 },
+        rotation: { x: cam.rotation?.pitch ?? 0, y: cam.rotation?.yaw ?? 0, z: cam.rotation?.roll ?? 0 },
         scale: { x: 1, y: 1, z: 1 },
       },
       camera: buildCameraRef(cam),
-      tags: ['camera', cam.viewId],
+      tags: ['camera', cam.viewId ?? 'default'],
     }))
   }
 
@@ -306,7 +306,7 @@ function buildLogoNodes(branding: BrandingSpec, rootId: string): SceneNode[] {
       type: 'empty',
       parentId: groupId,
       transform: {
-        position: logo.position,
+        position: logo.position ?? { x: 0, y: 0, z: 0 },
         rotation: { x: 0, y: 0, z: 0 },
         scale: { x: logo.widthMeters, y: logo.heightMeters, z: 0.01 },
       },
