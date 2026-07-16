@@ -1,0 +1,6 @@
+export { runMaterialEngine, type MaterialEngineResult } from './material-engine'
+export { resolveFromBlueprint, resolveFromSurface, resolveFromReference, buildMaterialReference, type ResolvedMaterial } from './material-resolver'
+export { getSurfaceRole, getDefaultMaterialType, mapSurfaceToMaterial, type SurfaceRole } from './surface-mapper'
+export { generateBrandMaterials, type BrandMaterialSet } from './brand-materials'
+export { validateMaterialAssignments, type MaterialValidationResult } from './material-validator'
+export { getPreset, MATERIAL_PRESETS, type PBRMaterialPreset } from './material-presets'
