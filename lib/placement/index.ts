@@ -1,0 +1,6 @@
+export { runPlacementEngine, type PlacementEngineResult } from './placement-engine'
+export { getZoneStrategy, getRecommendedObjects, getMaxObjectCount } from './placement-strategies'
+export { checkCollisions, findClearPosition, isInsideZone, boundsOverlap, getObjectBounds, type PlacedObject } from './collision-detector'
+export { getSpacingRule, getObjectMinSpacing, getWalkingClearance } from './spacing-rules'
+export { solveZonePlacements, type ZonePlacementPlan, type PlacedObjectResult } from './zone-solver'
+export { validateLayout, type LayoutValidationResult } from './layout-validator'
