@@ -136,7 +136,8 @@ export function adaptSceneToBlender(scene: Scene): BlenderScene {
     if (node.type === 'root') continue
 
     if (node.type === 'group') {
-      const parentCol = node.parentId ? resolveCollectionName(node, nodeMap) : 'Scene Collection'
+      const parentNode = node.parentId ? nodeMap.get(node.parentId) : null
+      const parentCol = parentNode ? resolveCollectionName(parentNode, nodeMap) : 'Scene Collection'
       collections.push({ name: node.name, parentName: parentCol })
       continue
     }
