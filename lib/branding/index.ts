@@ -1,0 +1,6 @@
+export { runBrandingEngine } from './branding-engine'
+export { placeLogo, placeMultipleLogos, type LogoPlacementRequest } from './logo-placement'
+export { generateBrandingLayout } from './branding-layout'
+export { validateBrandingPlacements, type BrandingValidationResult } from './branding-validator'
+export { calculateSafeArea, fitWithinSafeArea, alignPosition, preserveAspectRatio, surfaceNormal, surfaceRotationY } from './branding-utils'
+export type { BrandingSurface, LogoAlignment, VerticalAlignment, LogoDefinition, BrandingPlacement, SafeArea, BrandingEngineResult } from './branding-types'
