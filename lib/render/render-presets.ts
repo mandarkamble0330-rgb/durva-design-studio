@@ -7,7 +7,7 @@ function generateId(prefix: string): string {
 const PRESETS: Record<RenderPresetName, Omit<RenderConfiguration, 'configId' | 'metadata'>> = {
   preview: {
     presetName: 'preview',
-    engine: 'BLENDER_EEVEE_NEXT',
+    engine: 'BLENDER_EEVEE',
     resolution: { width: 640, height: 480, scale: 100 },
     samples: { render: 16, viewport: 8 },
     denoising: { enabled: false, algorithm: 'OPENIMAGEDENOISE', prefilter: 'FAST' },

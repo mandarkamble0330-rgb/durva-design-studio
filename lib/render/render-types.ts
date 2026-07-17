@@ -2,7 +2,7 @@ export type RenderPresetName = 'preview' | 'draft' | 'standard' | 'high' | 'ultr
 
 export type RenderFileFormat = 'PNG' | 'JPEG' | 'OPEN_EXR'
 
-export type RenderEngine = 'CYCLES' | 'BLENDER_EEVEE_NEXT'
+export type RenderEngine = 'CYCLES' | 'BLENDER_EEVEE'
 
 export interface RenderResolution {
   width: number
