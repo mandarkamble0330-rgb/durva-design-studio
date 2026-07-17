@@ -1,0 +1,5 @@
+export { runLightingEngine } from './lighting-engine'
+export { resolveBlueprintLight, generateAutoLights } from './light-resolver'
+export { validateLightPlacements, type LightingValidationResult } from './lighting-validator'
+export { getPreset, getPresetByType, getAllPresets, temperatureToHex } from './light-presets'
+export type { LightCategory, EngineLightType, LightPreset, LightPlacement, LightingEngineResult } from './lighting-types'
